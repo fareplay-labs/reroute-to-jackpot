@@ -2,9 +2,12 @@
 
 This project is a minimal redirect site. It sends users from `https://app.fareplay.io/` to your target app route on first load.
 
+It now includes a `404.html` fallback so non-root requests can still recover into the redirect flow.
+
 ## Files
 
 - `index.html` - redirect page
+- `404.html` - fallback redirect page
 - `upload-to-pinata.ps1` - one-command upload helper
 
 ## One-time setup
@@ -23,6 +26,8 @@ $env:PINATA_JWT = "PASTE_YOUR_PINATA_JWT"
 ```
 
 The script prints a CID.
+
+By default, the script uploads all `*.html` files in this folder (including `index.html` and `404.html`) in one wrapped directory CID.
 
 ## Njalla DNS records (for app.fareplay.io)
 

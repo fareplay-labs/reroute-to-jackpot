@@ -1,6 +1,6 @@
 param(
   [string]$Jwt = $env:PINATA_JWT,
-  [string]$FilePath = "index.html"
+  [string]$FolderPath = "."
 )
 
 $ErrorActionPreference = "Stop"
@@ -9,17 +9,40 @@ if ([string]::IsNullOrWhiteSpace($Jwt)) {
   Write-Error "PINATA_JWT is missing. Set it first: `$env:PINATA_JWT = 'your_jwt_here'"
 }
 
-if (!(Test-Path $FilePath)) {
-  Write-Error "File not found: $FilePath"
+if (!(Test-Path $FolderPath)) {
+  Write-Error "Folder not found: $FolderPath"
 }
 
-Write-Host "Uploading $FilePath to Pinata..."
+if (!(Test-Path (Join-Path $FolderPath "index.html"))) {
+  Write-Error "index.html not found in: $FolderPath"
+}
 
-$response = curl.exe -sS -X POST "https://api.pinata.cloud/pinning/pinFileToIPFS" `
-  -H "Authorization: Bearer $Jwt" `
-  -F "file=@$FilePath;filename=index.html;type=text/html" `
-  -F "pinataOptions={\"cidVersion\":1,\"wrapWithDirectory\":true}" `
-  -F "pinataMetadata={\"name\":\"fareplay-redirect-site\"}"
+$htmlFiles = Get-ChildItem -Path $FolderPath -Filter "*.html" -File
+
+if ($htmlFiles.Count -eq 0) {
+  Write-Error "No .html files found in: $FolderPath"
+}
+
+Write-Host "Uploading $($htmlFiles.Count) HTML file(s) from $FolderPath to Pinata..."
+
+$curlArgs = @(
+  "-sS",
+  "-X", "POST",
+  "https://api.pinata.cloud/pinning/pinFileToIPFS",
+  "-H", "Authorization: Bearer $Jwt"
+)
+
+foreach ($file in $htmlFiles) {
+  $curlArgs += "-F"
+  $curlArgs += "file=@$($file.FullName);filename=$($file.Name);type=text/html"
+}
+
+$curlArgs += "-F"
+$curlArgs += "pinataOptions={\"cidVersion\":1,\"wrapWithDirectory\":true}"
+$curlArgs += "-F"
+$curlArgs += "pinataMetadata={\"name\":\"fareplay-redirect-site\"}"
+
+$response = & curl.exe @curlArgs
 
 if ($LASTEXITCODE -ne 0) {
   Write-Error "Pinata upload failed."
