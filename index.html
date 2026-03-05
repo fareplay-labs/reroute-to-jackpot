@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <p>
+      Redirecting... If it does not happen automatically,
+      <a
+        id="manual-link"
+        href="https://app.fareplay.io/ipfs/bafybeibfjz3si44ux2ehpfeu2mrogehb4sekgtp7uc4h7hkjwiwmz6wbli/#/fareVault?poolAccount=BqQ9fhDxit7r9gcVPmsCgudxTXeEcZS4yjNyRuqExbkx"
+        >click here</a
+      >.
+    </p>
+    <script>
+      const target =
+        "https://app.fareplay.io/ipfs/bafybeibfjz3si44ux2ehpfeu2mrogehb4sekgtp7uc4h7hkjwiwmz6wbli/#/fareVault?poolAccount=BqQ9fhDxit7r9gcVPmsCgudxTXeEcZS4yjNyRuqExbkx";
+      const isRoot =
+        window.location.pathname === "/" ||
+        window.location.pathname === "/index.html";
+
+      if (isRoot) {
+        window.location.replace(target);
+      }
+    </script>
+  </body>
+</html>
